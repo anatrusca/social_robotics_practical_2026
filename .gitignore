@@ -5,5 +5,7 @@ env/
 .env/
 ENV/
 
-# Ignore logs directory
+# Ignore directory
 logs/
+
+__pycache__/

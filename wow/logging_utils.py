@@ -1,17 +1,25 @@
 import csv
 import statistics
+import time
 
-def t_rel_s(state, now_fn):
-    return (now_fn() - state.session_start_t) if state.session_start_t else 0.0
 
-def log_event(state, now_fn, event_type, disengagement_event_index_val=None, reengagement_latency_s=None):
+def now():
+    return time.monotonic()
+
+
+def t_rel_s(state):
+    return (now() - state.session_start_t) if state.session_start_t else 0.0
+
+
+def log_event(state, event_type, disengagement_event_index_val=None, reengagement_latency_s=None):
     state.event_rows.append({
         "session_id": state.session_id,
-        "time_since_start_s": round(t_rel_s(state, now_fn), 3),
+        "time_since_start_s": round(t_rel_s(state), 3),
         "event_type": event_type,
         "disengagement_event_index": disengagement_event_index_val if disengagement_event_index_val is not None else "",
         "reengagement_latency_s": round(reengagement_latency_s, 3) if isinstance(reengagement_latency_s, (int, float)) else "",
     })
+
 
 def write_csv(path, fieldnames, rows):
     with open(path, "w", newline="", encoding="utf-8") as f:
@@ -20,11 +28,9 @@ def write_csv(path, fieldnames, rows):
         for row in rows:
             writer.writerow(row)
 
+
 def compute_summary_row(state):
-    total_interaction_time_s = (
-        state.session_end_t - state.session_start_t
-        if (state.session_start_t and state.session_end_t) else 0.0
-    )
+    total_interaction_time_s = (state.session_end_t - state.session_start_t) if (state.session_start_t and state.session_end_t) else 0.0
 
     if state.reengagement_latencies_s:
         mean_reengagement_latency_s = statistics.mean(state.reengagement_latencies_s)
