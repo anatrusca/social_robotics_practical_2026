@@ -1,0 +1,9 @@
+# Ignore Python virtual environments
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# Ignore logs directory
+logs/

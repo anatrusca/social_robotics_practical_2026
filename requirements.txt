@@ -1,0 +1,4 @@
+autobahn
+twisted
+google-genai
+alpha-mini-rug
